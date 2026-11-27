@@ -16,6 +16,10 @@ Uses standard-library dependencies only. CI runs this repository's own code and 
 
 `planning.choose_plan(items, durations_ms, max_workers=..., budget_ms=..., setup_ms=..., quantum_ms=...)` compares deterministic duration-balanced plans from one worker through the caller's safe ceiling. It chooses the smallest estimated critical path within the total compute budget, breaking ties by compute and worker count. It accounts for repeated setup and configurable rounding; no feasible plan returns an explicit null selection, never an incomplete suite. Example: four 100 ms items, 50 ms setup per worker and 500 ms compute budget selects two workers (250 ms wall, 500 ms compute) rather than four (150 ms wall, 600 ms compute). These are synthetic estimates, not actual billed minutes or throughput. Queue time, contention, provider pricing and isolation require separate measurement. No execution or dispatch is performed by the planner.
 
+## Conservative feedback selection
+
+`impact.select_feedback(expected, dependencies, test_targets, changed, mandatory=(), global_change=False)` walks reverse dependency edges to identify transitively affected cases and always includes designated mandatory cases. Unknown changes, incomplete mappings, uncovered modules, empty changes and global inputs select the full suite. The caller must build an accurate graph; this is development feedback only, not a release waiver. No private dependency graph, test names or change metadata is sent to public CI.
+
 ## Integration boundary
 
 This is an independently useful public utility, not a mirror or remote runner for a private application. Consumers should pin a reviewed version and run their own integration checks. A green public CI run certifies only this utility at its tested commit, not any consuming application.
