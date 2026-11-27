@@ -1,6 +1,8 @@
 # takin-toolkit
 
-Deterministic work partitioning: sorted unique item IDs are distributed across N shards with group sizes differing by at most one. This balances item counts, not measured runtimes.
+Deterministic work partitioning: sorted unique item IDs are distributed across N shards with group sizes differing by at most one. This balances item counts, not measured runtimes. For heterogeneous independent work, `partition_by_duration(items, count, durations_ms, default_ms=1000)` places the longest estimated items first into the least-loaded shard and returns groups plus estimated total milliseconds. Timing IDs must match the manifest; unknown durations use an explicit positive default. This is a scheduling heuristic, not a concurrency safety check or a measured speedup.
+
+Synthetic example: four items with estimated durations 100, 1, 100, 1 ms yield a 200 ms maximum group load with count-based partitioning and 101 ms with duration-aware allocation. Actual setup, CPU, I/O and queue times must be benchmarked separately. Private workload manifests and timings stay in their private execution environment.
 
 ## Run locally
 
